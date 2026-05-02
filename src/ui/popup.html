@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>ThreadSave</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0d0d0d;--bg2:#161616;--bg3:#1f1f1f;--line:rgba(255,255,255,0.07);--t:#fff;--t2:rgba(255,255,255,0.5);--t3:rgba(255,255,255,0.25)}
+body{width:330px;min-height:500px;background:var(--bg);color:var(--t);font-family:"DM Sans",sans-serif;font-size:13px}
+header{padding:14px 16px 12px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between}
+.logo{display:flex;align-items:center;gap:8px;font-family:"Syne",sans-serif;font-size:15px;font-weight:800;letter-spacing:-0.3px}
+.logo-mark{width:26px;height:26px;background:#fff;border-radius:6px;display:flex;align-items:center;justify-content:center}
+.logo-mark svg{width:14px;height:14px;stroke:#0d0d0d;fill:none;stroke-width:2.5}
+.pchip{font-size:11px;font-weight:500;padding:3px 9px;border-radius:20px;background:var(--bg3);color:var(--t2);border:1px solid var(--line);display:flex;align-items:center;gap:5px;max-width:140px;overflow:hidden}
+.pchip img{width:13px;height:13px;border-radius:2px;flex-shrink:0}
+.pchip span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tabs{display:flex;border-bottom:1px solid var(--line)}
+.tab{flex:1;padding:10px;text-align:center;font-size:12px;font-weight:500;color:var(--t3);cursor:pointer;border:none;background:none;border-bottom:2px solid transparent;transition:color .15s,border-color .15s;font-family:"DM Sans",sans-serif}
+.tab.on{color:#fff;border-bottom-color:#fff}
+.pane{display:none;padding:14px 16px}.pane.on{display:block}
+.lbl{font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--t3);margin-bottom:9px}
+.count-block{text-align:center;padding:16px 0 12px}
+.count-num{font-family:"Syne",sans-serif;font-size:48px;font-weight:800;color:#fff;line-height:1}
+.count-sub{font-size:12px;color:var(--t2);margin-top:4px}
+.scan-row{display:flex;gap:6px;margin-bottom:14px}
+.sbtn{flex:1;padding:8px;border-radius:7px;background:var(--bg2);border:1px solid var(--line);color:var(--t2);font-size:12px;font-weight:500;cursor:pointer;font-family:"DM Sans",sans-serif;transition:all .12s}
+.sbtn:hover{background:var(--bg3);color:#fff}
+.fmt-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin-bottom:12px}
+.fmt-btn{padding:8px 2px;border-radius:7px;border:1px solid var(--line);background:var(--bg2);color:var(--t2);font-size:11px;font-weight:600;cursor:pointer;text-align:center;transition:all .12s;font-family:"DM Sans",sans-serif}
+.fmt-btn.on{background:#fff;color:#0d0d0d;border-color:#fff}
+.fmt-btn:hover:not(.on){background:var(--bg3);color:#fff}
+.mode-row{display:flex;gap:5px;margin-bottom:14px}
+.mbtn{flex:1;padding:7px;border-radius:7px;border:1px solid var(--line);background:var(--bg2);color:var(--t2);font-size:11px;font-weight:500;cursor:pointer;text-align:center;transition:all .12s;font-family:"DM Sans",sans-serif}
+.mbtn.on{border-color:rgba(255,255,255,.3);color:#fff;background:var(--bg3)}
+.export-btn{width:100%;padding:11px;border-radius:8px;background:#fff;color:#0d0d0d;border:none;font-size:13px;font-weight:600;cursor:pointer;font-family:"DM Sans",sans-serif;display:flex;align-items:center;justify-content:center;gap:7px;transition:opacity .15s}
+.export-btn:hover{opacity:.88}
+.export-btn:disabled{opacity:.35;cursor:not-allowed}
+.export-btn svg{width:14px;height:14px;stroke:#0d0d0d;fill:none;stroke-width:2}
+.status{font-size:11px;color:var(--t3);text-align:center;padding:7px 0 0}
+.status.ok{color:#22c55e}.status.err{color:#f87171}
+.media-scan-btn{width:100%;padding:10px;border-radius:8px;background:var(--bg2);border:1px solid var(--line);color:var(--t2);font-size:12px;font-weight:500;cursor:pointer;font-family:"DM Sans",sans-serif;margin-bottom:10px;transition:all .12s}
+.media-scan-btn:hover{background:var(--bg3);color:#fff}
+.media-list{display:flex;flex-direction:column;gap:5px;max-height:310px;overflow-y:auto}
+.media-item{display:flex;align-items:center;gap:9px;padding:9px 11px;border-radius:8px;background:var(--bg2);border:1px solid var(--line)}
+.micon{width:30px;height:30px;border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:14px}
+.minfo{flex:1;min-width:0}
+.mname{font-size:12px;font-weight:500;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mtype{font-size:10px;color:var(--t3);margin-top:1px;text-transform:uppercase;letter-spacing:.3px}
+.mdl{width:28px;height:28px;border-radius:6px;background:rgba(255,255,255,.08);border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:background .12s}
+.mdl:hover{background:rgba(255,255,255,.2)}
+.mdl svg{width:13px;height:13px;stroke:#fff;fill:none;stroke-width:2}
+.empty{text-align:center;padding:28px 16px;color:var(--t3);font-size:12px;line-height:1.7}
+footer{padding:10px 16px;border-top:1px solid var(--line);display:flex;align-items:center;justify-content:space-between}
+.fl{font-size:11px;color:var(--t3);text-decoration:none;transition:color .15s}.fl:hover{color:#fff}
+.fver{font-size:10px;color:var(--t3)}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">
+    <div class="logo-mark">
+      <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+    </div>
+    ThreadSave
+  </div>
+  <div class="pchip" id="pchip">
+    <img id="picon" src="" style="display:none">
+    <span id="pname">Detecting</span>
+  </div>
+</header>
+
+<div class="tabs">
+  <button class="tab on" data-tab="conv">Conversations</button>
+  <button class="tab" data-tab="media">Media &amp; Files</button>
+</div>
+
+<div class="pane on" id="pane-conv">
+  <div class="count-block">
+    <div class="count-num" id="msgCount">0</div>
+    <div class="count-sub">messages detected</div>
+  </div>
+  <div class="scan-row">
+    <button class="sbtn" id="autoScan">Auto scan</button>
+    <button class="sbtn" id="manualScan">Pick manually</button>
+  </div>
+  <div class="lbl">Format</div>
+  <div class="fmt-grid">
+    <button class="fmt-btn on" data-fmt="pdf">PDF</button>
+    <button class="fmt-btn" data-fmt="html">HTML</button>
+    <button class="fmt-btn" data-fmt="csv">CSV</button>
+    <button class="fmt-btn" data-fmt="xlsx">XLSX</button>
+    <button class="fmt-btn" data-fmt="txt">TXT</button>
+    <button class="fmt-btn" data-fmt="json">JSON</button>
+    <button class="fmt-btn" data-fmt="md">MD</button>
+  </div>
+  <div class="lbl">Mode</div>
+  <div class="mode-row">
+    <button class="mbtn on" data-mode="clean">Clean</button>
+    <button class="mbtn" data-mode="visual">Visual</button>
+    <button class="mbtn" data-mode="raw">Raw</button>
+  </div>
+  <button class="export-btn" id="exportBtn" disabled>
+    <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+    Export conversation
+  </button>
+  <div class="status" id="convStatus"></div>
+</div>
+
+<div class="pane" id="pane-media">
+  <button class="media-scan-btn" id="mediaScanBtn">Scan page for media and files</button>
+  <div class="media-list" id="mediaList">
+    <div class="empty">Scan to detect audio, video, PDFs, and other files on this page.</div>
+  </div>
+</div>
+
+<footer>
+  <a href="https://github.com/Samuelnganga7933/Thread-Saver" class="fl" target="_blank">GitHub</a>
+  <span class="fver">v1.2</span>
+  <a href="https://thread-saver-studio.vercel.app" class="fl" target="_blank">Studio</a>
+</footer>
+<script src="popup.js"></script>
+</body>
+</html>
